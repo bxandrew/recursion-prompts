@@ -18,26 +18,125 @@ var factorial = function(n) {
 // 2. Compute the sum of an array of integers.
 // sum([1,2,3,4,5,6]); // 21
 var sum = function(array) {
+  var total = 0;
+  var arrayCopy = array.slice();
+  //basecase, if array is empty return total;
+  if (!arrayCopy.length) return total;
+
+  //if the length is not 0;
+  //current elemeent is the first array element
+  var currEle = arrayCopy.shift();
+  //add that element onto our total
+  if (Array.isArray(currEle)) {
+    total += sum(currEle);
+  } else {
+    total += currEle;
+  }
+
+  total += sum(arrayCopy);
+  //recursively call the next function with new array and add the total from there onto our total
+
+  //after recursively calling through all array elements until it hits the basecase, return the final total amount
+  return total;
 };
 
 // 3. Sum all numbers in an array containing nested arrays.
 // arraySum([1,[2,3],[[4]],5]); // 15
 var arraySum = function(array) {
-};
+  var total = 0;
+  var arrayCopy = array.slice();
+  if (!arrayCopy.length) return total;
+
+  var currEle = arrayCopy.shift();
+  // console.log(currEle);
+  if (Array.isArray(currEle)) {
+    var innerTotal = sum(currEle);
+    total += innerTotal;
+  } else {
+    total += currEle;
+  }
+
+  total += arraySum(arrayCopy);
+
+  return total;
+}
+
+// var arraySum = function(array, total = 0) {
+//   var arrayCopy = array.slice();
+//   if (!arrayCopy.length) return total;
+
+//   var currEle = arrayCopy.shift();
+//   if (Array.isArray(currEle)) {
+//     total += arraySum(currEle);
+//   } else {
+//     total += currEle;
+//   }
+
+//   return arraySum(arrayCopy, total);
+// };
 
 // 4. Check if a number is even.
 var isEven = function(n) {
+  //if it is a negative num, absolute it and then continue checking if it is even by subtracting 2 each time
+  if (n < 0) n = Math.abs(n);
+
+  if (n === 0) return true;
+
+  var newN = n - 2;
+  if (newN < 0) return false;
+
+  return isEven(newN);
 };
 
 // 5. Sum all integers below a given integer.
 // sumBelow(10); // 45
 // sumBelow(7); // 21
 var sumBelow = function(n) {
+  //check if n is a negative integer
+    //if it is, isNEgative is true
+      //also turn n to abs value
+  var isNegative = false;
+  if (n < 0) {
+    isNegative = true;
+    n = Math.abs(n);
+  }
+
+  var sum = 0;
+  //basecase is if n is 0, return the sum variable
+  if (n <= 1) return sum;
+  sum += n - 1;
+  //add n to the sum
+  var newN = n - 1;
+  //decrement n by one
+  //recursive call function with new decremented n
+  sum += sumBelow(newN);
+
+  if (isNegative) return sum * -1;
+
+  return sum;
 };
 
 // 6. Get the integers within a range (x, y).
 // range(2,9); // [3,4,5,6,7,8]
 var range = function(x, y) {
+  var result = [];
+  if (x === y) return result; //edge case if x === y, return empty array
+
+  var nextNum;
+  if (x > y) {
+    nextNum = x - 1;
+  } else {
+    nextNum = x + 1;
+  }
+
+  if (nextNum === y) return result; //basecase if nextNum is equal to y, return the result array weve been building
+  result.push(nextNum); //if not basecase, concat the next num onto our result
+
+  var innerResult = range(nextNum, y);
+
+  result = result.concat(innerResult);
+
+  return result;
 };
 
 // 7. Compute the exponent of a number.
@@ -46,6 +145,26 @@ var range = function(x, y) {
 // exponent(4,3); // 64
 // https://www.khanacademy.org/computing/computer-science/algorithms/recursive-algorithms/a/computing-powers-of-a-number
 var exponent = function(base, exp) {
+  //basecase if exp is 0 return product
+  //determine if the exp is negative, if it is just simply multiply the exp by -1 to make it positive and make a variable marker to
+  //indicate that it was previously negative
+  var isNegExp = false;
+  if (exp < 0) {
+    isNegExp = true;
+    exp = exp *-1;
+  }
+
+  if (exp === 0) return 1;
+
+  //result will be set equal to the base * the next exponenet less
+  var result = base * exponent(base, exp - 1);
+
+  //if the exp was negative, return the inversion of the result ( 1 / result)
+  if (isNegExp) {
+    return (1 / result);
+  }
+
+  return result;
 };
 
 // 8. Determine if a number is a power of two.
@@ -53,10 +172,33 @@ var exponent = function(base, exp) {
 // powerOfTwo(16); // true
 // powerOfTwo(10); // false
 var powerOfTwo = function(n) {
+  //basecase if n === 1, return true;
+  if (n === 1) return true;
+  if (n < 1) return false;
+
+  var newN = n / 2;
+
+  return powerOfTwo(newN);
 };
 
 // 9. Write a function that reverses a string.
 var reverse = function(string) {
+  //basecase is when string has no more chars, return our built string
+  var stringCopy = string.slice();
+  var reversed = '';
+  if (!stringCopy.length) return reversed;
+
+  //one by one pop elements off of the stringcopy
+  var currChar = stringCopy.slice(-1);
+  stringCopy = stringCopy.slice(0,-1);
+
+  reversed += currChar;
+
+  var innerResult = reverse(stringCopy);
+  reversed += innerResult;
+
+  return reversed;
+
 };
 
 // 10. Write a function that determines if a string is a palindrome.
